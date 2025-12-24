@@ -5,15 +5,17 @@ import OwnerDashboard from "../pages/owner/Dashboard.vue";
 import Branches from "../pages/owner/Branches.vue";
 import Categories from "../pages/owner/Categories.vue";
 import Products from "../pages/owner/Products.vue";
-import Transactions from "../pages/staff/Transaction.vue";
 import Inventory from "../pages/owner/Inventory.vue";
 import Staff from "../pages/owner/Staff.vue";
 
+// STAFF PAGES
+import Transactions from "../pages/staff/Transaction.vue";
+import History from "../pages/staff/History.vue"; // <--- Wajib di-import!
 
 const routes = [
   { path: "/login", component: Login },
 
-  // OWNER ROUTES
+  // === OWNER ROUTES ===
   {
     path: "/",
     component: OwnerDashboard,
@@ -35,21 +37,26 @@ const routes = [
     meta: { requiresAuth: true, role: "owner" }
   },
   {
-  path: "/inventory",
-  component: Inventory,
-  meta: { requiresAuth: true, role: "owner" }
-    },
-      {
-  path: "/staff",
-  component: Staff,
-  meta: { requiresAuth: true, role: "owner" }
-    },
+    path: "/inventory",
+    component: Inventory,
+    meta: { requiresAuth: true, role: "owner" }
+  },
+  {
+    path: "/staff",
+    component: Staff,
+    meta: { requiresAuth: true, role: "owner" }
+  },
 
-
-  // STAFF ROUTE
+  // === STAFF ROUTES ===
   {
     path: "/transactions",
     component: Transactions,
+    meta: { requiresAuth: true, role: "staff" }
+  },
+  {
+    path: "/history",
+    name: "StaffHistory",
+    component: History,
     meta: { requiresAuth: true, role: "staff" }
   }
 ];
@@ -68,6 +75,8 @@ router.beforeEach((to, from, next) => {
   }
 
   if (to.meta.role && to.meta.role !== role) {
+    // Jika role tidak cocok, kembalikan ke login atau halaman error
+    // (Opsional: bisa redirect ke halaman default masing-masing role)
     return next("/login");
   }
 

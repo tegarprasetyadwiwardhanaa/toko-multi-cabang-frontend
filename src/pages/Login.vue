@@ -68,12 +68,12 @@
               <button 
                 type="button"
                 @click="showPassword = !showPassword"
-                class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer focus:outline-none transition-colors duration-200"
-                :class="showPassword ? 'text-indigo-600 hover:text-indigo-800' : 'text-gray-600 hover:text-gray-800'"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer focus:outline-none z-10 transition-colors duration-200"
+                :class="showPassword ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'"
                 title="Tampilkan/Sembunyikan Password"
               >
-                <Eye v-if="!showPassword" class="h-5 w-5" :stroke-width="2" />
-                <EyeOff v-else class="h-5 w-5" :stroke-width="2" />
+                <Eye v-if="!showPassword" class="h-5 w-5" />
+                <EyeOff v-else class="h-5 w-5" />
               </button>
             </div>
           </div>
@@ -112,11 +112,14 @@ import { useRouter } from "vue-router";
 import api from "../api/axios";
 import logoImage from '../components/logo.jpeg'; 
 
+// --- PERBAIKAN UTAMA: Import Icon Eye dan EyeOff ---
+import { Eye, EyeOff } from 'lucide-vue-next'; 
+
 const username = ref("");
 const password = ref("");
-const showPassword = ref(false); // State untuk toggle mata
-const isLoading = ref(false);    // State untuk loading spinner
-const errorMessage = ref("");    // State untuk error message UI
+const showPassword = ref(false); 
+const isLoading = ref(false);    
+const errorMessage = ref("");    
 const router = useRouter();
 
 const parseJwt = (token) => {
@@ -131,14 +134,10 @@ const parseJwt = (token) => {
 };
 
 const handleLogin = async () => {
-  // Reset state
   errorMessage.value = "";
   isLoading.value = true;
 
   try {
-    // Simulasi delay agar loading terlihat (opsional, hapus di production)
-    // await new Promise(r => setTimeout(r, 800)); 
-
     const res = await api.post("/auth/login", {
       username: username.value,
       password: password.value
@@ -153,7 +152,6 @@ const handleLogin = async () => {
     localStorage.setItem("role", payload.role);
     localStorage.setItem("branch", payload.branch || "");
 
-    // Redirect
     if (payload.role === "owner") {
       router.push("/");
     } else {
@@ -161,7 +159,6 @@ const handleLogin = async () => {
     }
   } catch (err) {
     console.error(err);
-    // Error handling yang lebih spesifik
     if (err.response && err.response.status === 401) {
         errorMessage.value = "Username atau password salah.";
     } else if (err.code === "ERR_NETWORK") {
@@ -170,7 +167,7 @@ const handleLogin = async () => {
         errorMessage.value = "Terjadi kesalahan sistem. Silakan coba lagi.";
     }
   } finally {
-    isLoading.value = false; // Matikan loading apapun hasilnya
+    isLoading.value = false; 
   }
 };
 </script>

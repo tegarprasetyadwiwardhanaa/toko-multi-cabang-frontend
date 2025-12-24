@@ -49,6 +49,10 @@
           <router-link to="/transactions" active-class="bg-indigo-600 text-white shadow-lg" class="flex items-center px-4 py-3 text-slate-300 rounded-lg transition-all duration-200 hover:bg-slate-800 hover:text-white mb-1">
             <ShoppingCart class="w-5 h-5 mr-3" /> Transaksi
           </router-link>
+
+          <router-link to="/history" active-class="bg-indigo-600 text-white shadow-lg" class="flex items-center px-4 py-3 text-slate-300 rounded-lg transition-all duration-200 hover:bg-slate-800 hover:text-white mb-1">
+            <History class="w-5 h-5 mr-3" /> Riwayat
+          </router-link>
         </template>
 
       </ul>
@@ -77,6 +81,7 @@ import {
   Package, 
   Warehouse, 
   Users, 
+  History,
   ShoppingCart 
 } from 'lucide-vue-next';
 
