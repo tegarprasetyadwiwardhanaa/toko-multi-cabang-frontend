@@ -5,15 +5,21 @@
 
     <div 
       :class="[
-        'flex flex-col min-h-screen transition-all duration-300', 
-        !isLoginPage ? 'ml-64' : '' 
+        'flex flex-col min-h-screen transition-all duration-300 ease-in-out', 
+        !isLoginPage ? 'ml-0 lg:ml-64' : ''  
       ]"
     >
-      
       <Navbar v-if="!isLoginPage" />
 
-      <main class="flex-1 p-8">
-        <router-view />
+      <main class="flex-1 p-4 lg:p-8">
+        <router-view v-slot="{ Component }">
+          <transition 
+            name="fade" 
+            mode="out-in"
+          >
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </main>
       
     </div>
@@ -24,13 +30,21 @@
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-
-// Import komponen Sidebar dan Navbar
 import Sidebar from './components/Sidebar.vue';
 import Navbar from './components/Navbar.vue';
 
 const route = useRoute();
-
-// Deteksi otomatis: Apakah kita sedang di halaman Login?
 const isLoginPage = computed(() => route.path === '/login');
 </script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

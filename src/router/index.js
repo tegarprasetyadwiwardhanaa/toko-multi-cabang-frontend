@@ -7,13 +7,21 @@ import Categories from "../pages/owner/Categories.vue";
 import Products from "../pages/owner/Products.vue";
 import Inventory from "../pages/owner/Inventory.vue";
 import Staff from "../pages/owner/Staff.vue";
+import BranchInventory from '../pages/owner/BranchInventory.vue';
+import Profile from '../pages/Profile.vue';
 
 // STAFF PAGES
 import Transactions from "../pages/staff/Transaction.vue";
-import History from "../pages/staff/History.vue"; // <--- Wajib di-import!
+import History from "../pages/staff/History.vue"; 
 
 const routes = [
   { path: "/login", component: Login },
+  { 
+    path: '/profile', 
+    name: 'Profile',
+    component: Profile, 
+    meta: { requiresAuth: true } 
+  },
 
   // === OWNER ROUTES ===
   {
@@ -45,6 +53,12 @@ const routes = [
     path: "/staff",
     component: Staff,
     meta: { requiresAuth: true, role: "owner" }
+  },
+  { 
+    path: '/branch-inventory', 
+    name: 'BranchInventory',
+    component: BranchInventory, 
+    meta: { requiresAuth: true, role: 'owner' } 
   },
 
   // === STAFF ROUTES ===

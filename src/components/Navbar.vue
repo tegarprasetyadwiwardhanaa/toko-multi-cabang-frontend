@@ -1,60 +1,92 @@
 <template>
-  <nav class="h-16 bg-white border-b border-gray-200 flex justify-between items-center px-6 shadow-sm z-40 relative">
-    
-    <div class="flex items-center">
-      <h2 class="text-xl font-semibold text-slate-800 tracking-tight">
-        {{ pageTitle }}
-      </h2>
+  <nav
+    class="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 flex justify-between items-center px-6 shadow-sm sticky top-0 z-40"
+  >
+    <div class="flex items-center gap-3">
+      <div class="flex flex-col">
+        <h2 class="text-xl font-bold text-slate-800 tracking-tight capitalize leading-none">
+          {{ pageTitle }}
+        </h2>
+        <span class="text-xs text-slate-500 font-medium mt-1">
+          Sistem Manajemen Toko
+        </span>
+      </div>
     </div>
 
-    <div class="flex items-center gap-4">
-      
-      <button class="p-2 text-slate-400 hover:text-indigo-600 transition-colors relative">
-        <Bell class="w-5 h-5" />
-        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-      </button>
+    <div class="flex items-center gap-6">
 
-      <div class="h-6 w-px bg-slate-200"></div>
-
-      <button 
-        @click="logout" 
-        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200"
+      <div
+        class="hidden md:flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-lg border border-slate-100 shadow-sm"
       >
-        <LogOut class="w-4 h-4" />
-        <span>Keluar</span>
-      </button>
+        <div class="flex flex-col items-end leading-tight">
+          <span class="text-xs font-semibold text-slate-600">
+            {{ currentDate }}
+          </span>
+          <span class="text-sm font-mono font-bold text-indigo-600">
+            {{ currentTime }}
+          </span>
+        </div>
+
+        <div class="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-slate-200">
+          <Clock class="w-4 h-4 text-slate-400" />
+        </div>
+      </div>
+
+      <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { LogOut, Bell } from 'lucide-vue-next';
+import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { Clock } from 'lucide-vue-next'
 
-const router = useRouter();
-const route = useRoute();
+const route = useRoute()
 
-// Membuat Judul Halaman Dinamis berdasarkan Route Name
 const pageTitle = computed(() => {
-  // Mapping path ke Judul yang cantik
   const titles = {
     '/': 'Dashboard Overview',
     '/branches': 'Manajemen Cabang',
     '/categories': 'Kategori Barang',
-    '/products': 'Daftar Produk',
-    '/inventory': 'Stok Gudang',
-    '/staff': 'Manajemen Karyawan',
-    '/transactions': 'Kasir & Transaksi'
-  };
-  return titles[route.path] || 'Panel Admin';
-});
-
-const logout = () => {
-  // Konfirmasi sederhana (opsional)
-  if(confirm("Apakah Anda yakin ingin keluar?")) {
-    localStorage.clear();
-    router.push("/login");
+    '/products': 'Data Master Produk',
+    '/inventory': 'Stok Gudang Pusat',
+    '/branch-inventory': 'Monitoring Stok Cabang',
+    '/staff': 'Manajemen Staff & Akses',
+    '/transactions': 'Kasir & Transaksi',
+    '/profile': 'Pengaturan Akun',
+    '/history': 'Riwayat Transaksi'
   }
-};
+
+  return titles[route.path] || 'Panel Admin'
+})
+
+const currentDate = ref('')
+const currentTime = ref('')
+let timer = null
+
+const updateTime = () => {
+  const now = new Date()
+
+  currentDate.value = now.toLocaleDateString('id-ID', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  })
+
+  currentTime.value = now.toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+onMounted(() => {
+  updateTime()
+  timer = setInterval(updateTime, 60000) 
+})
+
+onUnmounted(() => {
+  clearInterval(timer)
+})
 </script>
