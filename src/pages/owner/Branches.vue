@@ -150,9 +150,8 @@
               <input 
                 v-model="form.nama_cabang" 
                 type="text" 
-                required
                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium"
-                placeholder="Contoh: Cabang Melawai Raya"
+                placeholder="Contoh: Cabang 1"
               />
             </div>
 
@@ -161,9 +160,8 @@
               <input 
                 v-model="form.kota" 
                 type="text" 
-                required
                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium"
-                placeholder="Contoh: Jakarta Selatan"
+                placeholder="Contoh: Pekanbaru"
               />
             </div>
 
@@ -171,7 +169,6 @@
               <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Alamat Lengkap <span class="text-rose-500">*</span></label>
               <textarea 
                 v-model="form.alamat" 
-                required
                 rows="3"
                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all resize-none text-sm leading-relaxed"
                 placeholder="Jalan, Nomor Gedung, RT/RW..."
@@ -207,7 +204,6 @@
 import { ref, onMounted, computed } from "vue";
 import api from "../../api/axios"; 
 import { Plus, Pencil, Power, X, Store, Search, MapPin } from 'lucide-vue-next';
-// PENTING: Kita gunakan alert global yg sudah dibuat sebelumnya agar konsisten
 import { Toast, ConfirmAlert } from '../../utils/alert'; 
 
 // State Data
@@ -215,9 +211,9 @@ const branches = ref([]);
 const showModal = ref(false);
 const isEdit = ref(false);
 const editId = ref(null);
-const isLoading = ref(true); // Untuk Skeleton Loader
-const isSubmitting = ref(false); // Untuk tombol simpan loading
-const searchQuery = ref(""); // Untuk Search Bar
+const isLoading = ref(true); 
+const isSubmitting = ref(false); 
+const searchQuery = ref(""); 
 
 // State Form
 const form = ref({
@@ -245,7 +241,7 @@ const load = async () => {
 
 onMounted(load);
 
-// --- FITUR SEARCH (COMPUTED) ---
+// --- FITUR SEARCH ---
 const filteredBranches = computed(() => {
   if (!searchQuery.value) return branches.value;
   const lowerQuery = searchQuery.value.toLowerCase();
@@ -284,8 +280,19 @@ const resetForm = () => {
   isSubmitting.value = false;
 };
 
-// --- LOGIC CRUD ---
+// --- LOGIC CRUD (DIPERBARUI DENGAN VALIDASI) ---
 const submit = async () => {
+  // 1. VALIDASI MANUAL CLIENT-SIDE
+  // Cek apakah field kosong atau hanya spasi
+  if (!form.value.nama_cabang.trim() || !form.value.kota.trim() || !form.value.alamat.trim()) {
+      Toast.fire({
+          icon: 'warning',
+          title: 'Data Belum Lengkap',
+          text: 'Nama Cabang, Kota, dan Alamat wajib diisi.'
+      });
+      return; // Berhenti di sini, jangan lanjut ke API
+  }
+
   isSubmitting.value = true;
   
   try {
@@ -298,18 +305,20 @@ const submit = async () => {
     closeModal();
     load();
     
-    // Gunakan Toast Global
     Toast.fire({
       icon: 'success',
       title: isEdit.value ? 'Data Diperbarui' : 'Cabang Ditambahkan'
     });
 
   } catch (e) {
-    // Gunakan ConfirmAlert (Modal) untuk error
+    // Menangkap pesan error dari Mongoose (Backend)
+    // Contoh error backend: "Branch validation failed: nama_cabang: Path `nama_cabang` is required."
+    const msg = e.response?.data?.message || "Terjadi kesalahan sistem";
+    
     ConfirmAlert.fire({
         icon: 'error',
         title: 'Gagal Menyimpan',
-        text: e.response?.data?.message || "Terjadi kesalahan sistem",
+        text: msg,
         confirmButtonText: 'Tutup'
     });
   } finally {
@@ -321,7 +330,6 @@ const submit = async () => {
 const toggleStatus = async (branch) => {
   const isDeactivating = branch.is_active;
   
-  // Gunakan ConfirmAlert Global
   const result = await ConfirmAlert.fire({
     title: isDeactivating ? 'Nonaktifkan Cabang?' : 'Aktifkan Cabang?',
     text: isDeactivating 
@@ -336,7 +344,7 @@ const toggleStatus = async (branch) => {
 
   if (result.isConfirmed) {
     try {
-      await api.delete(`/branches/${branch._id}`); // Asumsi endpoint toggle status
+      await api.delete(`/branches/${branch._id}`); 
       load();
       Toast.fire({
         icon: 'success',

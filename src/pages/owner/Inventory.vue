@@ -214,7 +214,7 @@
                         <label class="block text-sm font-bold text-slate-700 mb-1.5">
                             {{ formUpdate.type === 'add' ? 'Jumlah Barang Masuk' : 'Total Stok Fisik Saat Ini' }}
                         </label>
-                        <input type="number" v-model="formUpdate.stok" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none font-bold text-lg" required min="1" />
+                        <input type="number" v-model="formUpdate.stok" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none font-bold text-lg"  min="1" />
                     </div>
 
                     <div class="h-px bg-slate-100 my-2"></div>
@@ -281,7 +281,7 @@
 
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1.5">Cabang Tujuan</label>
-                        <select v-model="formRestock.branch" @change="fetchBranchStock" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none text-sm" required>
+                        <select v-model="formRestock.branch" @change="fetchBranchStock" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none text-sm" >
                             <option value="">-- Pilih Cabang --</option>
                             <option v-for="b in activeBranches" :key="b._id" :value="b._id">{{ b.nama_cabang }}</option>
                         </select>
@@ -296,7 +296,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Jumlah Kirim</label>
-                           <input type="number" v-model="formRestock.qty" :max="selectedItem?.stok" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none font-bold" required min="1" />
+                           <input type="number" v-model="formRestock.qty" :max="selectedItem?.stok" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none font-bold"  min="1" />
                         </div>
                         <div>
                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Set Harga Jual</label>
@@ -407,7 +407,7 @@ const openUpdateModal = (item) => {
   selectedItem.value = item;
   formUpdate.value = {
     type: 'add',
-    stok: 0, 
+    stok: "", 
     harga_modal: item.harga_modal,
     harga_jual: item.harga_jual
   };
@@ -422,6 +422,11 @@ const isPotentialLoss = computed(() => {
 });
 
 const submitUpdate = async () => {
+  if (formUpdate.value.harga_modal < 0 || formUpdate.value.harga_jual < 0) {
+      Toast.fire({ icon: 'warning', title: 'Harga Tidak Valid', text: 'Harga tidak boleh negatif.' });
+      return;
+  }
+
   if (isPotentialLoss.value) {
       const confirmed = await ConfirmAlert.fire({
           title: 'Potensi Kerugian!',
@@ -479,6 +484,15 @@ const fetchBranchStock = async () => {
 };
 
 const submitRestock = async () => {
+  if (!formRestock.value.branch) {
+      Toast.fire({ icon: 'warning', title: 'Pilih Cabang' });
+      return;
+  }
+  if (formRestock.value.qty === '' || formRestock.value.qty <= 0) {
+      Toast.fire({ icon: 'warning', title: 'Jumlah Kirim Harus Di Isi' });
+      return;
+  }
+
   if (formRestock.value.qty > selectedItem.value.stok) {
     Toast.fire({ icon: 'error', title: 'Stok Tidak Cukup', text: 'Jumlah kirim melebihi stok gudang.' });
     return;

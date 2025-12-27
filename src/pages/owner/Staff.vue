@@ -1,10 +1,10 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6 h-[calc(100vh-6rem)] flex flex-col">
     
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 flex-shrink-0">
       <div>
         <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Manajemen Staff</h2>
-        <p class="text-slate-500 text-sm mt-1">Kelola data karyawan, penempatan cabang, dan hak akses sistem.</p>
+        <p class="text-slate-500 text-sm mt-1">Kelola data karyawan dan hak akses sistem.</p>
       </div>
 
       <div class="flex flex-col sm:flex-row gap-3">
@@ -12,15 +12,15 @@
           <input 
             v-model="searchQuery" 
             type="text" 
-            placeholder="Cari nama atau username..." 
-            class="pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 w-full sm:w-64 outline-none transition-all shadow-sm group-hover:border-indigo-300"
+            placeholder="Cari nama staff..." 
+            class="pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 w-full sm:w-64 outline-none transition-all shadow-sm group-hover:border-indigo-300 bg-white"
           />
           <Search class="w-5 h-5 text-slate-400 absolute left-3 top-2.5 group-hover:text-indigo-500 transition-colors" />
         </div>
 
         <button 
           @click="openModal()" 
-          class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm"
+          class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-all font-bold text-sm transform hover:-translate-y-0.5"
         >
           <UserPlus class="w-5 h-5" />
           <span>Staff Baru</span>
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-h-[400px] flex flex-col">
+    <div class="bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-200 flex-1 flex flex-col overflow-hidden">
       
       <div v-if="isLoading" class="p-6 space-y-4">
          <div v-for="i in 5" :key="i" class="flex items-center justify-between animate-pulse border-b border-slate-50 pb-4 last:border-0">
@@ -41,13 +41,12 @@
             </div>
             <div class="h-4 bg-slate-100 rounded w-32"></div>
             <div class="h-6 bg-slate-100 rounded w-20"></div>
-            <div class="h-8 bg-slate-100 rounded w-24"></div>
          </div>
       </div>
 
       <div v-else-if="filteredStaff.length === 0" class="flex-1 flex flex-col items-center justify-center p-12 text-center">
-        <div class="bg-slate-50 p-4 rounded-full mb-4 ring-1 ring-slate-100">
-           <Users class="w-12 h-12 text-slate-300" />
+        <div class="bg-slate-50 p-6 rounded-full mb-4 ring-1 ring-slate-100 shadow-inner">
+           <Users class="w-16 h-16 text-slate-300" />
         </div>
         <h3 class="text-lg font-bold text-slate-800">
           {{ searchQuery ? 'Staff Tidak Ditemukan' : 'Belum Ada Staff' }}
@@ -57,9 +56,9 @@
         </p>
       </div>
 
-      <div v-else class="overflow-x-auto">
+      <div v-else class="flex-1 overflow-y-auto custom-scrollbar">
         <table class="w-full text-left border-collapse">
-          <thead class="bg-slate-50 border-b border-slate-200">
+          <thead class="bg-slate-50/80 backdrop-blur-sm sticky top-0 z-10 border-b border-slate-200">
             <tr>
               <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Identitas Staff</th>
               <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Penempatan</th>
@@ -76,7 +75,7 @@
             >
               <td class="px-6 py-4 align-middle">
                 <div class="flex items-center gap-4">
-                  <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shadow-sm border border-white ring-2 ring-slate-100"
+                  <div class="h-10 w-10 flex-shrink-0 rounded-xl flex items-center justify-center font-bold text-sm shadow-sm ring-1 ring-black/5"
                     :class="s.is_active ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white' : 'bg-slate-200 text-slate-500'">
                     {{ getInitials(s.nama_lengkap || s.username) }}
                   </div>
@@ -92,7 +91,7 @@
 
               <td class="px-6 py-4 align-middle">
                 <div class="flex items-center gap-2">
-                    <div class="p-1.5 rounded-md" :class="s.branch ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-400'">
+                    <div class="p-1.5 rounded-lg flex-shrink-0" :class="s.branch ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-400'">
                         <MapPin class="w-4 h-4" />
                     </div>
                     <div class="flex flex-col">
@@ -117,11 +116,11 @@
               </td>
 
               <td class="px-6 py-4 text-center align-middle">
-                <div class="flex justify-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <div class="flex justify-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   <button 
                     @click="edit(s)" 
                     class="p-2 text-indigo-600 hover:bg-indigo-50 border border-transparent hover:border-indigo-100 rounded-lg transition-all tooltip-trigger" 
-                    title="Edit Data Staff"
+                    title="Edit Data"
                   >
                     <Pencil class="w-4 h-4" />
                   </button>
@@ -142,117 +141,115 @@
           </tbody>
         </table>
       </div>
+      
+      <div class="bg-slate-50 border-t border-slate-200 px-6 py-3 text-xs text-slate-500 flex justify-between items-center">
+         <span>Total Staff: <b>{{ staff.length }}</b></span>
+         <span>Staff Aktif: <b>{{ staff.filter(s => s.is_active).length }}</b></span>
+      </div>
+
     </div>
 
     <transition name="modal">
-        <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto">
-            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" @click="closeModal"></div>
+        <div v-if="showModal" class="fixed inset-0 z-[60] overflow-y-auto">
+            <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" @click="closeModal"></div>
 
             <div class="flex min-h-full items-center justify-center p-4">
-                <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all">
+                <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all ring-1 ring-black/5">
                     
-                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-white to-slate-50">
                         <div>
-                            <h3 class="text-lg font-bold text-slate-800">
-                                {{ isEdit ? "Edit Data Staff" : "Tambah Staff Baru" }}
+                            <h3 class="text-xl font-bold text-slate-800 tracking-tight">
+                                {{ isEdit ? "Perbarui Data Staff" : "Tambah Staff Baru" }}
                             </h3>
-                            <p class="text-xs text-slate-500">Pastikan data valid untuk akses login.</p>
+                            <p class="text-xs text-slate-500 mt-1">Lengkapi informasi di bawah ini untuk akses login.</p>
                         </div>
-                        <button @click="closeModal" class="text-slate-400 hover:text-rose-500 hover:bg-rose-50 p-1 rounded-md transition-colors">
+                        <button @click="closeModal" class="text-slate-400 hover:text-rose-500 hover:bg-rose-50 p-2 rounded-full transition-all">
                             <X class="w-5 h-5" />
                         </button>
                     </div>
 
-                    <form @submit.prevent="submit" class="p-6 space-y-5">
+                    <form @submit.prevent="submit" class="p-8 space-y-6">
                         
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Nama Lengkap <span class="text-rose-500">*</span></label>
-                            <div class="relative group/input">
-                                <input 
-                                    v-model="form.nama_lengkap" 
-                                    type="text" 
-                                    required
-                                    class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none capitalize transition-all"
-                                    placeholder="Contoh: Budi Santoso"
-                                />
-                                <IdCard class="w-5 h-5 text-slate-400 absolute left-3 top-2.5 group-focus-within/input:text-indigo-500 transition-colors" />
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Informasi Pribadi</label>
+                                <div class="relative group/input">
+                                    <input 
+                                        v-model="form.nama_lengkap" 
+                                        type="text" 
+                                        class="peer w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none capitalize transition-all placeholder:text-slate-400 text-slate-700"
+                                        placeholder="Nama Lengkap Staff"
+                                    />
+                                    <IdCard class="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5 peer-focus:text-indigo-500 transition-colors" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 mt-5">Akses Login</label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="relative group/input">
+                                        <input 
+                                            v-model="form.username" 
+                                            type="text" 
+                                            :disabled="isEdit" 
+                                            class="peer w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed transition-all font-mono text-sm placeholder:text-slate-400 text-slate-700"
+                                            placeholder="Username"
+                                        />
+                                        <User class="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5 peer-focus:text-indigo-500 transition-colors" />
+                                    </div>
+                                    
+                                    <div class="relative group/input">
+                                        <input 
+                                            v-model="form.password" 
+                                            :type="showPassword ? 'text' : 'password'"
+                                            class="peer w-full pl-11 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-700"
+                                            :placeholder="isEdit ? 'Ubah Password (Opsional)' : 'Password'"
+                                        />
+                                        <Lock class="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5 peer-focus:text-indigo-500 transition-colors" />
+                                        <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-3.5 text-slate-400 hover:text-indigo-600 focus:outline-none transition-colors">
+                                            <Eye v-if="!showPassword" class="w-5 h-5" />
+                                            <EyeOff v-else class="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                                <p v-if="!isEdit" class="text-[10px] text-slate-400 mt-1.5 ml-1">* Username tidak dapat diubah setelah dibuat.</p>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Username Login <span class="text-rose-500">*</span></label>
-                            <div class="relative group/input">
-                                <input 
-                                    v-model="form.username" 
-                                    type="text" 
-                                    required
-                                    :disabled="isEdit" 
-                                    class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none disabled:bg-slate-100 disabled:text-slate-500 transition-all font-mono text-sm"
-                                    placeholder="Tanpa spasi, misal: kasir01"
-                                />
-                                <User class="w-5 h-5 text-slate-400 absolute left-3 top-2.5 group-focus-within/input:text-indigo-500 transition-colors" />
-                            </div>
-                            <p v-if="isEdit" class="text-[10px] text-slate-400 mt-1 italic">Username tidak dapat diubah setelah dibuat.</p>
-                        </div>
-
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">
-                                Password Akses
-                                <span v-if="isEdit" class="text-xs font-normal text-slate-500 ml-1">(Kosongkan jika tidak ingin mengubah)</span>
-                                <span v-else class="text-rose-500">*</span>
-                            </label>
-                            <div class="relative group/input">
-                                <input 
-                                    v-model="form.password" 
-                                    :type="showPassword ? 'text' : 'password'"
-                                    :required="!isEdit"
-                                    class="w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none bg-white transition-all"
-                                    placeholder="••••••••"
-                                />
-                                <Lock class="w-5 h-5 text-slate-400 absolute left-3 top-2.5 group-focus-within/input:text-indigo-500 transition-colors" />
-                                
-                                <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 focus:outline-none">
-                                    <Eye v-if="!showPassword" class="w-5 h-5" />
-                                    <EyeOff v-else class="w-5 h-5" />
-                                </button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Penempatan Cabang <span class="text-rose-500">*</span></label>
+                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 mt-2">Penempatan Kerja</label>
                             <div class="relative group/input">
                                 <select 
                                     v-model="form.branch" 
-                                    required
-                                    class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none bg-white transition-all cursor-pointer"
+                                    class="peer w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none appearance-none cursor-pointer transition-all text-slate-700"
                                 >
-                                    <option value="">-- Pilih Lokasi Kerja --</option>
+                                    <option value="" disabled selected>Pilih Cabang Toko</option>
                                     <option v-for="b in activeBranches" :key="b._id" :value="b._id">
-                                    {{ b.nama_cabang }}
+                                    {{ b.nama_cabang }} ({{ b.kota }})
                                     </option>
                                 </select>
-                                <Store class="w-5 h-5 text-slate-400 absolute left-3 top-2.5 group-focus-within/input:text-indigo-500 transition-colors" />
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                                <Store class="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5 peer-focus:text-indigo-500 transition-colors" />
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
                                     <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex justify-end gap-3 pt-4 border-t border-slate-50">
+                        <div class="flex justify-end gap-3 pt-6 mt-4 border-t border-slate-100">
                             <button 
                                 type="button" 
                                 @click="closeModal" 
-                                class="px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+                                class="px-6 py-2.5 text-sm font-bold text-slate-500 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-slate-700 hover:border-slate-300 transition-all"
                             >
                                 Batal
                             </button>
                             <button 
                                 type="submit" 
                                 :disabled="isSubmitting"
-                                class="px-5 py-2.5 text-sm font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                class="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
                                 <span v-if="isSubmitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                                {{ isEdit ? "Simpan Perubahan" : "Buat Akun Staff" }}
+                                {{ isEdit ? "Simpan Perubahan" : "Simpan Data" }}
                             </button>
                         </div>
 
@@ -272,7 +269,6 @@ import {
   Users, UserPlus, Search, Pencil, Power, X, 
   User, Lock, Eye, EyeOff, Store, MapPin, IdCard
 } from 'lucide-vue-next';
-// Import Global Alerts
 import { Toast, ConfirmAlert } from '../../utils/alert'; 
 
 // State
@@ -283,8 +279,8 @@ const showModal = ref(false);
 const showPassword = ref(false); 
 const isEdit = ref(false);
 const editId = ref(null);
-const isLoading = ref(true); // Skeleton State
-const isSubmitting = ref(false); // Button Loading State
+const isLoading = ref(true); 
+const isSubmitting = ref(false);
 
 const form = ref({
   nama_lengkap: "",
@@ -320,7 +316,6 @@ onMounted(load);
 // Helpers
 const getInitials = (name) => {
   if (!name) return "S";
-  // Ambil 2 huruf pertama dari kata pertama dan kedua (jika ada)
   const parts = name.split(' ');
   if (parts.length > 1) {
       return (parts[0][0] + parts[1][0]).toUpperCase();
@@ -360,16 +355,40 @@ const resetForm = () => {
   isSubmitting.value = false;
 };
 
-// CRUD Logic
+// CRUD Logic 
 const submit = async () => {
+  if (!form.value.nama_lengkap.trim() || !form.value.username.trim() || !form.value.branch) {
+      Toast.fire({ icon: 'warning', title: 'Data Tidak Lengkap', text: 'Mohon isi semua field yang diperlukan.' });
+      return;
+  }
+
+  if (form.value.username.length < 4) {
+      Toast.fire({ 
+          icon: 'warning', 
+          title: 'Username Terlalu Pendek', 
+          text: 'Username minimal 4 karakter (contoh: budi01).' 
+      });
+      return; 
+  }
+
+  if (!isEdit.value && !form.value.password) {
+      Toast.fire({ icon: 'warning', title: 'Password Wajib Diisi' });
+      return;
+  }
+  if (form.value.password && form.value.password.length < 6) {
+      Toast.fire({ icon: 'warning', title: 'Password Lemah', text: 'Minimal 6 karakter.' });
+      return;
+  }
+
   isSubmitting.value = true;
   try {
+    const payload = { ...form.value, role: 'staff' }; 
+
     if (isEdit.value) {
-      const payload = { ...form.value };
       if (!payload.password) delete payload.password; 
       await api.put(`/users/${editId.value}`, payload);
     } else {
-      await api.post("/users", { ...form.value });
+      await api.post("/users", payload);
     }
     
     closeModal();
@@ -382,11 +401,7 @@ const submit = async () => {
 
   } catch (err) {
     const msg = err.response?.data?.message || "Gagal menyimpan data";
-    ConfirmAlert.fire({
-        icon: 'error',
-        title: 'Error',
-        text: msg
-    });
+    ConfirmAlert.fire({ icon: 'error', title: 'Error', text: msg, confirmButtonText: 'Tutup' });
   } finally {
     isSubmitting.value = false;
   }
@@ -436,6 +451,21 @@ const toggleStatus = async (s) => {
 </script>
 
 <style scoped>
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; 
+  border-radius: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8; 
+}
+
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.3s ease;

@@ -236,7 +236,6 @@
                             <input 
                             v-model="form.kode_barang" 
                             placeholder="Contoh: BRG-001" 
-                            required
                             class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none text-sm font-mono transition-all"
                             />
                         </div>
@@ -246,7 +245,6 @@
                             <input 
                             v-model="form.satuan" 
                             placeholder="Pcs / Box / Kg" 
-                            required
                             class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none text-sm transition-all"
                             />
                         </div>
@@ -257,7 +255,6 @@
                         <input 
                             v-model="form.nama_barang" 
                             placeholder="Masukkan nama produk..." 
-                            required
                             class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none text-sm transition-all"
                         />
                     </div>
@@ -267,7 +264,6 @@
                         <div class="relative">
                             <select 
                                 v-model="form.category" 
-                                required
                                 class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none text-sm appearance-none transition-all cursor-pointer"
                             >
                                 <option value="" disabled>-- Pilih Kategori --</option>
@@ -441,6 +437,10 @@ const resetForm = () => {
 };
 
 const submit = async () => {
+  if (!form.value.kode_barang.trim() || !form.value.nama_barang.trim() || !form.value.satuan.trim()) {
+      Toast.fire({ icon: 'warning', title: 'Data Belum Lengkap' });
+      return;
+  }
   if (!form.value.category) {
     Toast.fire({ icon: 'warning', title: 'Kategori Wajib Dipilih' });
     return;

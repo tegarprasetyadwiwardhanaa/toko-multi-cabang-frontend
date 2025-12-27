@@ -8,7 +8,7 @@
           {{ pageTitle }}
         </h2>
         <span class="text-xs text-slate-500 font-medium mt-1">
-          Sistem Manajemen Toko
+          Sistem Manajemen Toko dan Inventori Barang
         </span>
       </div>
     </div>
